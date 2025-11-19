@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Prediction result</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin:2rem; background:#fff; }
+      .container { max-width:900px; margin:auto; }
+      h1 { margin-bottom:0.2rem; }
+      .row { display:flex; gap:1rem; align-items:flex-start; }
+      .left { flex:1; }
+      .right { width:320px; }
+      ul { columns: 2; }
+      .error { color: red; font-weight:600; }
+      img { border:1px solid #ddd; }
+      a { text-decoration:none; color:#007bff; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <a href="/">← Back</a>
+      <h1>Prediction result</h1>
+
+      {% if error %}
+        <p class="error">{{ error }}</p>
+      {% else %}
+        <div class="row">
+          <div class="left">
+            <p><strong>Predicted class (person id):</strong> <span style="font-size:1.2rem">{{ predicted }}</span></p>
+            <h3>Confidence</h3>
+            <p style="font-size:1.1rem">{{ confidence }}</p>
+
+            <h3>Class Probabilities</h3>
+            <ul>
+              {% for cls, pct in class_probs %}
+                <li>Class {{ cls }} → {{ '%.1f'|format(pct) }}%</li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <div class="right">
+            <p><strong>Source:</strong> {{ source }}</p>
+            {% if image_data %}
+              <h4>Uploaded Image (scaled)</h4>
+              <img src="{{ image_data }}" alt="uploaded" width="256" height="256" />
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </body>
+</html>
