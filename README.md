@@ -56,8 +56,9 @@ kubectl get pods
 kubectl get deployments
 
 
-Access the Flask App Running in Kubernetes
+13.Access the Flask App Running in Kubernetes
 
 minikube service olivetti-service --url
+
 
 
