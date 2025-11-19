@@ -1,6 +1,5 @@
 name: CI - train and test
 
-# Trigger only on pushes to the dev branch
 on:
   push:
     branches:
@@ -13,16 +12,40 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Setup Python 3.10
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      - name: Install dependencies (pip, pinned numpy first)
+      - name: Upgrade pip / setuptools / wheel
         run: |
           python -m pip install --upgrade pip setuptools wheel
-          # install numpy first to match C-API for compiled wheels
-          python -m pip install "numpy==1.24.3"
-          # now install the rest from requirements (which includes scikit-learn pinned)
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
+      - name: Install pinned numpy first (force reinstall)
+        run: |
+          # force reinstall numpy so ABI is correct before binary wheels install
+          python -m pip install --upgrade --force-reinstall "numpy==1.24.3"
+
+      - name: Install remaining pinned packages (scikit-learn, joblib, pillow)
+        run: |
+          # install scikit-learn and other pinned deps
+          python -m pip install --no-cache-dir "scikit-learn==1.2.2" "joblib==1.2.0" "pillow==9.5.0"
+          # if you have other items in requirements.txt (like opencv), install them separately to avoid interfering
+          if [ -f requirements.txt ]; then
+            # install other deps from requirements but skip numpy/scikit-learn to avoid conflicts
+            sed '/numpy/d;/scikit-learn/d' requirements.txt > /tmp/reqs_partial.txt || true
+            if [ -s /tmp/reqs_partial.txt ]; then pip install -r /tmp/reqs_partial.txt; fi
+          fi
+
+      - name: Print numpy and sklearn versions (debug)
+        run: |
+          python -c "import numpy, sklearn; print('numpy', numpy.__version__); print('sklearn', sklearn.__version__)"
+
+      - name: Run training script
+        run: python train.py
+
+      - name: Run testing script
+        run: python test.py
+
+      - name: List workspace files
+        run: ls -la
