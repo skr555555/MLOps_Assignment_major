@@ -1,0 +1,6 @@
+scikit-learn==1.2.2
+joblib
+flask==2.2.5
+numpy
+pillow
+opencv-python-headless
