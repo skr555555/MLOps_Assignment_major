@@ -1,5 +1,5 @@
 ﻿# MLOps Major Assignment - g24ai2080
-
+Note: Pipeline is from docker_cicd branch
 1. Create environment
 conda create -n mlops_env python=3.10
 conda activate mlops_env
@@ -46,3 +46,4 @@ kubectl get deployments
 Access the Flask App Running in Kubernetes
 
 minikube service olivetti-service --url
+
